@@ -61,3 +61,8 @@ print(df_trees_info.head())
 for df_leaves_info in df_leaves_info_list:
     print(df_leaves_info.head())
 
+similar_idxs, similar_nums = helper.get_similar_samples(X_test, X_train)
+
+print(similar_idxs)
+
+print(similar_nums)

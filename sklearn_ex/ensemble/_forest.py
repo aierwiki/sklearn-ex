@@ -7,14 +7,14 @@ class RandomForestHelper():
     def __init__(self, estimator):
         self.estimator = estimator
 
-    def get_similar_samples(self, samples, candidates, top_k, verbose=0):
+    def get_similar_samples(self, samples, candidates, top_k=5, verbose=0):
         """
         对一组样本中的每个样本，在另一组样本中找出最相似的k个样本，依据在随机森林中落到同一个叶子节点的数量来衡量相似性。
         :param samples: 要处理的一组样本
         :param candidates: 寻找相似样本的一组样本
-        :param top_k: 前k个最相似的
-        :param verbose: 是否打印处理过程
-        :return: 最相似的k个样本在candidates中的下标，相似样本在多少棵决策树中落到了同一个叶子节点。
+        :param top_k: 前k个最相似的，默认值5
+        :param verbose: 是否打印处理过程，大于0为打印，0为不打印，默认值0
+        :return: top_k_idx_list, top_k_nums_list,最相似的k个样本在candidates中的下标，相似样本在多少棵决策树中落到了同一个叶子节点。
         """
         sample_leaves = self.estimator.apply(samples)
         candidate_leaves = self.estimator.apply(candidates)
@@ -27,11 +27,20 @@ class RandomForestHelper():
             sum_like_arr = like_arr.sum(axis=1)
             top_k_idxs = sum_like_arr.argsort().tolist()[-top_k:]
             top_k_idxs.reverse()
-            tok_k_idx_list.append(top_K_idxs)
+            top_k_idx_list.append(top_k_idxs)
             top_k_num_list.append(sum_like_arr[top_k_idxs].tolist())
         return top_k_idx_list, top_k_num_list
 
     def get_forest_info(self):
+        """
+        获取随机森林的信息
+        Returns
+        -------
+        df_trees_info:  DataFrame
+                        The infomation of forest's trees (depth, leaves number)
+        leaves_info:    list of DataFrame
+                        Every item of this list(DataFrame) is the infomation of every tree's leaves
+        """
         trees_info = []
         leaves_info = []
         for i, tree in enumerate(self.estimator.estimators_):

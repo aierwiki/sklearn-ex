@@ -15,7 +15,7 @@ class DecisionTreeHelper():
         获取样本在决策树中的决策路径
         :param dtc: 决策树模型（已经训练好的）
         :param X: 样本（只包含特征）
-        :return: 每个样本在决策树种的决策路径
+        :return: list, 每个样本在决策树种的决策路径,每个决策路径是一个dict
         """
         feature = self.estimator.tree_.feature
 
@@ -84,6 +84,17 @@ class DecisionTreeHelper():
         return np.argwhere(leave_id == leaf_id)
 
     def get_samples_of_leaf(self, leaf_id, X):
+        """
+        Get every sample's index of X if the sample is in the leaf
+
+        Parameters
+        ----------
+        leaf_id: int, the id of leaf
+
+        Returns
+        ---------
+        sample_idxs: ndarray of shape (n_samples,), n_samples is the number of samples which in the leaf
+        """
         leaves_id = self.estimator.apply(X)
         return np.argwhere(leaves_id == leaf_id)
 
